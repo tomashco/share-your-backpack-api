@@ -7,21 +7,32 @@
     "test": "test"
   },
   "scripts": {
+    "pretest": "npm run lint",
     "test": "tap \"test/**/*.test.js\"",
-    "start": "fastify start -l info app.js",
-    "dev": "fastify start -w -l info -P app.js"
+    "start": "fastify start -l info --options app.js",
+    "dev": "npm run start -- --watch --pretty-logs -debug",
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "mongo:create": "docker run -d --name fastify-mongo -p 27017:27017 mongo",
+    "mongo:start": "docker start fastify-mongo",
+    "mongo:stop": "docker container stop fastify-mongo"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^4.0.0",
-    "fastify-plugin": "^4.0.0",
     "@fastify/autoload": "^5.0.0",
+    "@fastify/cors": "^8.3.0",
+    "@fastify/env": "^4.2.0",
+    "@fastify/mongodb": "^7.0.0",
     "@fastify/sensible": "^5.0.0",
-    "fastify-cli": "^5.8.0"
+    "@fastify/swagger": "^8.9.0",
+    "fastify": "^4.0.0",
+    "fastify-cli": "^5.8.0",
+    "fastify-plugin": "^4.0.0"
   },
   "devDependencies": {
+    "standard": "^17.1.0",
     "tap": "^16.1.0"
   }
 }
