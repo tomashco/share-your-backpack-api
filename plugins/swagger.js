@@ -1,19 +1,20 @@
-const fp = require('fastify-plugin')
+'use strict'
 
-module.exports = fp(async function (fastify, opts) {
-  fastify.register(require('@fastify/swagger'), {
+const fp = require('fastify-plugin')
+const fastifySwagger = require('@fastify/swagger')
+const pkg = require('../package.json')
+
+module.exports = fp(async function swaggerPlugin (fastify, opts) {
+  console.log('into swagger')
+  fastify.register(fastifySwagger, {
     routePrefix: '/docs',
     exposeRoute: fastify.secrets.NODE_ENV !== 'production',
     swagger: {
       info: {
         title: 'Fastify app',
         description: 'Fastify Book examples',
-        version: require('../package.json').version
+        version: pkg.version
       }
     }
-  })
-  fastify.ready(err => {
-    if (err) throw err
-    fastify.swagger()
   })
 }, { dependencies: ['application-config'] })
