@@ -1,62 +1,50 @@
 'use strict'
 
 module.exports = async function todoRoutes (fastify, _opts) {
-  const todos = fastify.mongo.db.collection('todos')
-
   fastify.route({
     method: 'GET',
     url: '/',
+    schema: {
+      queryString: fastify.getSchema('schema:todo:list:query'),
+      response: {
+        200: fastify.getSchema('schema:todo:list:response')
+      }
+    },
     handler: async function listTodo (request, reply) {
       const { skip, limit, title } = request.query
-      const filter = title
-        ? {
-            title: new RegExp(title,
-              'i')
-          }
-        : {}
 
-      const data = await todos
-        .find(filter, {
-          limit,
-          skip
-        })
-        .toArray()
-
-      const totalCount = await todos.countDocuments(filter)
-
-      return { data, totalCount }
+      const todos = await this.mongoDataSource.listTodos({ filter: { title }, skip, limit })
+      const totalCount = await this.mongoDataSource.countTodos()
+      return { data: todos, totalCount }
     }
   })
   fastify.route({
     method: 'POST',
     url: '/',
-    handler: async function createTodo (request, reply) {
-      const _id = new this.mongo.ObjectId()
-      const now = new Date()
-      const createdAt = now
-      const modifiedAt = now
-      const newTodo = {
-        _id,
-        id: _id,
-        ...request.body,
-        done: false,
-        createdAt,
-        modifiedAt
+    schema: {
+      body: fastify.getSchema('schema:todo:create:body'),
+      response: {
+        201: fastify.getSchema('schema:todo:create:response')
       }
-      await todos.insertOne(newTodo)
+    },
+    handler: async function createTodo (request, reply) {
+      const insertedId = await this.mongoDataSource.createTodo(request.body)
       reply.code(201)
-      return { id: _id }
+      return { id: insertedId }
     }
   })
 
   fastify.route({
     method: 'GET',
     url: '/:id',
+    schema: {
+      params: fastify.getSchema('schema:todo:read:params'),
+      response: {
+        200: fastify.getSchema('schema:todo')
+      }
+    },
     handler: async function readTodo (request, reply) {
-      const todo = await todos.findOne(
-        { _id: new this.mongo.ObjectId(request.params.id) },
-        { projection: { _id: 0 } }
-      )
+      const todo = await this.mongoDataSource.readTodo(request.params.id)
       if (!todo) {
         reply.code(404)
         return { error: 'Todo not found' }
@@ -68,23 +56,17 @@ module.exports = async function todoRoutes (fastify, _opts) {
   fastify.route({
     method: 'PUT',
     url: '/:id',
+    schema: {
+      params: fastify.getSchema('schema:todo:read:params'),
+      body: fastify.getSchema('schema:todo:update:body')
+    },
     handler: async function updateTodo (request, reply) {
-      const res = await todos.updateOne(
-        {
-          _id: new
-          fastify.mongo.ObjectId(request.params.id)
-        },
-        {
-          $set: {
-            ...request.body,
-            modifiedAt: new Date()
-          }
-        }
-      )
+      const res = await this.mongoDataSource.updateTodo(request.params.id, request.body)
       if (res.modifiedCount === 0) {
         reply.code(404)
         return { error: 'Todo not found' }
       }
+
       reply.code(204)
     }
   })
@@ -92,11 +74,11 @@ module.exports = async function todoRoutes (fastify, _opts) {
   fastify.route({
     method: 'DELETE',
     url: '/:id',
+    schema: {
+      params: fastify.getSchema('schema:todo:read:params')
+    },
     handler: async function deleteTodo (request, reply) {
-      const res = await todos.deleteOne({
-        _id: new
-        fastify.mongo.ObjectId(request.params.id)
-      })
+      const res = await this.mongoDataSource.deleteTodo(request.params.id)
       if (res.deletedCount === 0) {
         reply.code(404)
         return { error: 'Todo not found' }
@@ -108,24 +90,16 @@ module.exports = async function todoRoutes (fastify, _opts) {
   fastify.route({
     method: 'POST',
     url: '/:id/:status',
+    schema: {
+      params: fastify.getSchema('schema:todo:status:params')
+    },
     handler: async function changeStatus (request, reply) {
-      const done = request.params.status === 'done'
-      const res = await todos.updateOne(
-        {
-          _id: new
-          fastify.mongo.ObjectId(request.params.id)
-        },
-        {
-          $set: {
-            done,
-            modifiedAt: new Date()
-          }
-        }
-      )
+      const res = await this.mongoDataSource.updateTodo(request.params.id, { done: true })
       if (res.modifiedCount === 0) {
         reply.code(404)
         return { error: 'Todo not found' }
       }
+
       reply.code(204)
     }
   })
