@@ -94,7 +94,7 @@ module.exports = async function todoRoutes (fastify, _opts) {
       params: fastify.getSchema('schema:todo:status:params')
     },
     handler: async function changeStatus (request, reply) {
-      const res = await this.mongoDataSource.updateTodo(request.params.id, { done: true })
+      const res = await this.mongoDataSource.updateTodo(request.params.id, { done: request.params.status === 'done' })
       if (res.modifiedCount === 0) {
         reply.code(404)
         return { error: 'Todo not found' }
