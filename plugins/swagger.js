@@ -5,7 +5,6 @@ const fastifySwagger = require('@fastify/swagger')
 const pkg = require('../package.json')
 
 module.exports = fp(async function swaggerPlugin (fastify, opts) {
-  console.log('into swagger')
   fastify.register(fastifySwagger, {
     routePrefix: '/docs',
     exposeRoute: fastify.secrets.NODE_ENV !== 'production',
