@@ -11,6 +11,14 @@
       "type": "integer",
       "default": 3000
     },
+  "JWT_SECRET": {
+      "type": "string",
+      "default": "changethis"
+    },
+  "JWT_EXPIRE_IN": {
+      "type": "integer",
+      "default": 3000
+    },
   "MONGO_URL": {
       "type": "string"
     }
