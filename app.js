@@ -14,6 +14,14 @@ module.exports = async function (fastify, opts) {
   await fastify.register(require('./configs/config'))
   fastify.log.info('Config loaded %o', fastify.config)
 
+  if (fastify.secrets.NODE_ENV !== 'production') {
+    await fastify.register(require('fastify-overview'), {
+      addSource: true
+    })
+    await fastify.register(require('fastify-overview-ui'), {
+    }) // ui available at {your app's url}/fastify-overview-ui/
+  }
+
   // Plugins
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'plugins'),

@@ -31,6 +31,8 @@
     "@fastify/swagger-ui": "^1.9.3",
     "fastify": "^4.0.0",
     "fastify-cli": "^5.8.0",
+    "fastify-overview": "^3.4.0",
+    "fastify-overview-ui": "^2.2.1",
     "fastify-plugin": "^4.0.0"
   },
   "devDependencies": {
