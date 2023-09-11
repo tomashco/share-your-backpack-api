@@ -9,9 +9,8 @@ module.exports = async function (fastify, opts) {
     dir: path.join(__dirname, 'schemas'),
     indexPattern: /^loader.js$/i
   })
-
   // Config
-  await fastify.register(require('./configs/config'))
+  await fastify.register(require('./configs/config'), Object.assign({}, opts))
   fastify.log.info('Config loaded %o', fastify.config)
 
   if (fastify.secrets.NODE_ENV !== 'production') {
