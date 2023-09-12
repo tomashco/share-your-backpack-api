@@ -5,7 +5,7 @@ const startArgs = '-l silent --options app.js'
 
 const defaultEnv = {
   NODE_ENV: 'test',
-  MONGO_URL: 'mongodb://localhost:27017/basis-test',
+  MONGO_URL: 'mongodb://127.0.0.1:27017/basis-test',
   JWT_SECRET: 'secret-1234567890',
   PORT: 3000,
   JWT_EXPIRE_IN: 3600

@@ -6,7 +6,7 @@ const { buildApp } = require('./helper')
 t.test('Login Test Suite', async (mainSuite) => {
   // * TEST SUITE CONFIGURATIONS
   const app = await buildApp(t, {
-    MONGO_URL: 'mongodb://localhost:27017/login-test-db'
+    MONGO_URL: 'mongodb://127.0.0.1:27017/login-test-db'
   })
   const userData = {
     username: 'test',
