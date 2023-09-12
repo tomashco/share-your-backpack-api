@@ -8,7 +8,8 @@
   },
   "scripts": {
     "pretest": "npm run lint",
-    "test": "tap \"test/**/*.test.js\"",
+    "test": "tap --before=test/run-before.js test/**/**.test.js --after=test/run-after.js",
+    "test:nostop": "tap --before=test/run-before.js test/**/**.test.js",
     "start": "fastify start -l info --options app.js",
     "dev": "npm run start -- --watch --pretty-logs -debug",
     "lint": "standard",
@@ -37,6 +38,7 @@
     "fastify-plugin": "^4.0.0"
   },
   "devDependencies": {
+    "dockerode": "^3.3.5",
     "standard": "^17.1.0",
     "tap": "^16.3.8"
   }

@@ -4,7 +4,6 @@ const fp = require('fastify-plugin')
 
 const generateHash = require('./generate-hash')
 
-module.exports.prefixOverride = '' // expose the service at root level
 module.exports = fp(
   async function applicationAuth (fastify, opts) {
     fastify.post('/register', {
@@ -112,3 +111,5 @@ module.exports = fp(
     dependencies: ['authentication-plugin'],
     encapsulate: true
   })
+
+module.exports.prefixOverride = ''
