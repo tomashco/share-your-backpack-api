@@ -36,7 +36,8 @@
     "fastify-metrics": "^10.3.0",
     "fastify-overview": "^3.4.0",
     "fastify-overview-ui": "^2.2.1",
-    "fastify-plugin": "^4.0.0"
+    "fastify-plugin": "^4.0.0",
+    "mongoose": "^7.5.1"
   },
   "devDependencies": {
     "dockerode": "^3.3.5",

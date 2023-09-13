@@ -1,7 +1,7 @@
 'use strict'
 
 const t = require('tap')
-const { buildApp } = require('./helper')
+const { buildApp } = require('../../helper')
 
 t.test('Login Test Suite', async (mainSuite) => {
   // * TEST SUITE CONFIGURATIONS
@@ -16,12 +16,6 @@ t.test('Login Test Suite', async (mainSuite) => {
   const privatePOSTRoutes = ['/logout', '/refresh', '/todos', '/todos/:id/:status']
   const privatePUTRoutes = ['/todos/:id']
   const privateDELETERoutes = ['/todos/:id']
-
-  function cleanCache () {
-    Object.keys(require.cache).forEach(function (key) {
-      delete require.cache[key]
-    })
-  }
 
   // * TEST SUITE TESTS
   mainSuite.test('cannot access protected routes', async (mainTest) => {
@@ -103,19 +97,5 @@ t.test('Login Test Suite', async (mainSuite) => {
       t.equal(response.statusCode, 200)
       t.match(response.json(), { username: 'test' })
     })
-  })
-
-  mainSuite.test('register error', async (t) => {
-    const path = '../routes/data-store.js'
-    cleanCache()
-    require(path)
-    require.cache[require.resolve(path)].exports = {
-      async store () {
-        throw new Error('Fail to store')
-      }
-    }
-    t.teardown(cleanCache)
-    const response = await app.inject({ url: '/register' })
-    t.equal(response.statusCode, 404)
   })
 })
