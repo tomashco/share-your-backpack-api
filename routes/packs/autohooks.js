@@ -13,12 +13,9 @@ module.exports = fp(async function packAutoHooks (fastify, opts) {
   fastify.addHook('onRequest', async (request, reply) => {
     request.packsDataSource = {
       async countPacks (filter = {}) {
-        if (request?.user?.id) { filter.userId = request.user.id }
-        if (filter.name) {
-          filter.name = new RegExp(filter.name, 'i')
-        } else {
-          delete filter.name
-        }
+        if (request?.user?.id) { filter.userId = request.user.id } else {
+          filter = {}
+        } // [4]
         const totalCount = await packs.countDocuments(filter)
         return totalCount
       },
