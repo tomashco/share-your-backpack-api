@@ -3,17 +3,26 @@
   "$id": "schema:pack",
   "additionalProperties": false,
   "properties": {
-    "_id": {
-      "type": "string"
-    },
     "id": {
       "type": "string"
     },
-    "title": {
+    "name": {
       "type": "string"
     },
-    "done": {
-      "type": "boolean"
+    "description": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "number"
+    },
+    "location": {
+      "type": "string"
+    },
+    "activityLink": {
+      "type": "string"
+    },
+    "activityType": {
+      "type": "string"
     },
     "createdAt": {
       "type": "string",
@@ -22,6 +31,15 @@
     "modifiedAt": {
       "type": "string",
       "format": "date-time"
+    },
+    "packData": {
+      "type": "array",
+      "items": {
+        "$ref": "schema:pack"
+      }
+    },
+    "schemaVersion": {
+      "type": "string"
     }
   }
 }

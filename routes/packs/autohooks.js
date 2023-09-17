@@ -14,6 +14,11 @@ module.exports = fp(async function packAutoHooks (fastify, opts) {
     request.packsDataSource = {
       async countPacks (filter = {}) {
         if (request?.user?.id) { filter.userId = request.user.id }
+        if (filter.name) {
+          filter.name = new RegExp(filter.name, 'i')
+        } else {
+          delete filter.name
+        }
         const totalCount = await packs.countDocuments(filter)
         return totalCount
       },
@@ -24,10 +29,10 @@ module.exports = fp(async function packAutoHooks (fastify, opts) {
         limit = 50,
         asStream = false
       } = {}) {
-        if (filter.title) {
-          filter.title = new RegExp(filter.title, 'i')
+        if (filter.name) {
+          filter.name = new RegExp(filter.name, 'i')
         } else {
-          delete filter.title
+          delete filter.name
         }
         if (request?.user?.id) { filter.userId = request.user.id } // if id is present, only user items are returned
 
@@ -43,39 +48,20 @@ module.exports = fp(async function packAutoHooks (fastify, opts) {
         }
         return cursor.toArray()
       },
-      async createPack ({ title }) {
+      async createPack ({ name, ...otherData }) {
         const _id = new fastify.mongo.ObjectId()
         const now = new Date()
         const userId = request.user.id
         const { insertedId } = await packs.insertOne({
           _id,
           userId,
-          title,
-          done: false,
+          name,
+          ...otherData,
           id: _id,
           createdAt: now,
           modifiedAt: now
         })
         return insertedId
-      },
-      async createPacks (packList) {
-        const now = new Date()
-        const userId = request.user.id
-        const toInsert = packList.map(rawPack => {
-          const _id = new fastify.mongo.ObjectId()
-
-          return {
-            _id,
-            userId,
-            ...rawPack,
-            id: _id,
-            createdAt: now,
-            modifiedAt: now
-          }
-        })
-
-        await packs.insertMany(toInsert)
-        return toInsert.map((pack) => pack._id)
       },
       async readPack (id, projection = {}) {
         const pack = await packs.findOne(
@@ -86,19 +72,23 @@ module.exports = fp(async function packAutoHooks (fastify, opts) {
         )
         return pack
       },
-      async updatePack (id, newPack) {
+      async updatePack (id, packData) {
         return packs.updateOne(
           { _id: new fastify.mongo.ObjectId(id), userId: request.user.id },
           {
             $set: {
-              ...newPack,
+              ...packData,
               modifiedAt: new Date()
             }
           }
         )
       },
       async deletePack (id) {
-        return packs.deleteOne({ _id: new fastify.mongo.ObjectId(id), userId: request.user.id })
+        const mongoInstance = new fastify.mongo.ObjectId(id)
+        return packs.deleteOne({
+          _id: mongoInstance,
+          userId: request.user.id
+        })
       }
     }
   })
