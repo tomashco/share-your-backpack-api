@@ -3,11 +3,33 @@
   "$id": "schema:pack:update:body",
   "additionalProperties": false,
   "properties": {
-    "title": {
+     "name": {
       "type": "string"
     },
-    "done": {
-      "type": "boolean"
+    "description": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "number"
+    },
+    "location": {
+      "type": "string"
+    },
+    "activityLink": {
+      "type": "string"
+    },
+    "activityType": {
+      "type": "string"
+    },
+    "packData": {
+      "type": "array",
+      "items": {
+        "$ref": "schema:pack"
+      }
+    },
+    "schemaVersion": {
+      "type": "string"
     }
-  }
+
+  } 
 }

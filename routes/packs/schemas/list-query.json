@@ -3,7 +3,7 @@
   "$id": "schema:pack:list:query",
   "additionalProperties": false,
   "properties": {
-    "title": {
+    "name": {
       "type": "string"
     }, 
     "limit": {

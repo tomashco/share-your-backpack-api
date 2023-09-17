@@ -11,13 +11,14 @@ module.exports = async function packRoutes (fastify, _opts) {
       }
     },
     handler: async function listAllPacks (request, reply) {
-      const { skip, limit, _title } = request.query
+      const { skip, limit, name } = request.query
 
-      const packs = await request.packsDataSource.listPacks({ filter: { _title }, skip, limit })
-      const totalCount = await request.packsDataSource.countPacks()
+      const packs = await request.packsDataSource.listPacks({ filter: { name }, skip, limit })
+      const totalCount = await request.packsDataSource.countPacks({ filter: { name } })
       return { data: packs, totalCount }
     }
   })
+
   fastify.route({
     method: 'GET',
     url: '/userPacks',
@@ -59,10 +60,8 @@ module.exports = async function packRoutes (fastify, _opts) {
   fastify.route({
     method: 'GET',
     url: '/:id',
-    // onRequest: fastify.authenticate,
     schema: {
       params: fastify.getSchema('schema:pack:read:params'),
-      // headers: fastify.getSchema('schema:auth:token-header'),
       response: {
         200: fastify.getSchema('schema:pack')
       }
@@ -111,25 +110,6 @@ module.exports = async function packRoutes (fastify, _opts) {
         reply.code(404)
         return { error: 'Pack not found' }
       }
-      reply.code(204)
-    }
-  })
-
-  fastify.route({
-    method: 'POST',
-    url: '/:id/:status',
-    onRequest: fastify.authenticate,
-    schema: {
-      headers: fastify.getSchema('schema:auth:token-header'),
-      params: fastify.getSchema('schema:pack:status:params')
-    },
-    handler: async function changeStatus (request, reply) {
-      const res = await request.packsDataSource.updatePack(request.params.id, { done: request.params.status === 'done' })
-      if (res.modifiedCount === 0) {
-        reply.code(404)
-        return { error: 'Pack not found' }
-      }
-
       reply.code(204)
     }
   })

@@ -1,11 +1,44 @@
 {
   "type": "object",
   "$id": "schema:pack:create:body",
-  "required": ["title"],
+  "required": ["name"],
   "additionalProperties": false,
    "properties": {
-    "title": {
+     "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "number"
+    },
+    "location": {
+      "type": "string"
+    },
+    "activityLink": {
+      "type": "string"
+    },
+    "activityType": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "packData": {
+      "type": "array",
+      "items": {
+        "$ref": "schema:pack"
+      }
+    },
+    "schemaVersion": {
       "type": "string"
     }
+
   } 
 }
